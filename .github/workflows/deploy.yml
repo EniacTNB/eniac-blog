@@ -2,26 +2,46 @@ name: Deploy Blog
 
 
 on:
+
   push:
     branches:
       - main
 
 
+  repository_dispatch:
+    types:
+      - obsidian-update
+
+
+
 permissions:
+
   contents: read
+
 
 
 jobs:
 
+
   build:
+
 
     runs-on: ubuntu-latest
 
 
     steps:
 
+
       - name: Checkout blog
         uses: actions/checkout@v4
+
+
+      - name: Checkout Obsidian
+        uses: actions/checkout@v4
+        with:
+          repository: EniacTNB/Obsidian-Knowloedge
+          path: obsidian
+          token: ${{ secrets.OBSIDIAN_TOKEN }}
 
 
       - name: Setup Node
@@ -33,6 +53,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+
+      - name: Sync blog
+        run: npm run sync-blog
+        env:
+          OBSIDIAN_PATH: ./obsidian/2-Area/博客写作/Posts
 
 
       - name: Build Astro
