@@ -3,7 +3,11 @@ import path from "path";
 import matter from "gray-matter";
 
 
-const postsDirectory ="/Users/eniac/Documents/艾AA/2-Area/博客写作/Posts";
+const postsDirectory =
+path.join(
+    process.cwd(),
+    "src/content/posts"
+);
 
 
 export function getPosts(){
