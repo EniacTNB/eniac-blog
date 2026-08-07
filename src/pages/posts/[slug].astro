@@ -1,0 +1,64 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import {getPosts} from "../../utils/posts";
+import {marked} from "marked";
+
+
+export async function getStaticPaths(){
+
+const posts=getPosts();
+
+
+return posts.map(post=>({
+
+params:{
+slug:post.slug
+},
+
+props:{
+post
+}
+
+}));
+
+}
+
+
+
+const {post}=Astro.props;
+
+
+const html =
+marked(post.content);
+
+
+---
+
+
+<Layout title={post.title}>
+
+
+<article>
+
+
+<h1>
+
+{post.title}
+
+</h1>
+
+
+<p>
+
+{post.description}
+
+</p>
+
+
+<div set:html={html} />
+
+
+</article>
+
+
+</Layout>

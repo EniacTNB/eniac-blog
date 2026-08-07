@@ -1,0 +1,35 @@
+---
+const {
+post
+}=Astro.props;
+---
+
+
+<article>
+
+<h2>
+
+<a href={`/posts/${post.slug}`}>
+
+{post.title}
+
+</a>
+
+</h2>
+
+
+<p>
+
+{post.description}
+
+</p>
+
+
+<div>
+
+{post.tags?.join(" · ")}
+
+</div>
+
+
+</article>

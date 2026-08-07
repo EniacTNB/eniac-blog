@@ -16,6 +16,7 @@
     "astro": "^7.1.6",
     "glob": "^13.0.6",
     "gray-matter": "^4.0.3",
-    "lucide-astro": "^0.556.0"
+    "lucide-astro": "^0.556.0",
+    "marked": "^18.0.9"
   }
 }
