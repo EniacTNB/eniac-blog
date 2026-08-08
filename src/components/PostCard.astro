@@ -9,7 +9,7 @@ post
 
 <h2>
 
-<a href={`/posts/${post.slug}`}>
+<a href={`${import.meta.env.BASE_URL}/posts/${post.slug}`.replace(/\/+/g,"/")}>
 
 {post.title}
 
