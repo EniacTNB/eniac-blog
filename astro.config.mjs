@@ -6,8 +6,7 @@ import remarkObsidian from "./src/plugins/remark-obsidian.mjs";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://eniactnb.github.io',
-  base: '/eniac-blog',
+  site: 'https://blog.3n1ac.com',
 
   integrations: [
     sitemap(),
