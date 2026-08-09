@@ -2,7 +2,7 @@
 const base = import.meta.env.BASE_URL;
 
 const path = (value = "") =>
-  `${base}${value}`.replace(/\/+/g, "/");
+  `${base}/${value}`.replace(/\/+/g, "/");
 
 const navItems = [
   { label: "文章", href: path("posts/") },
