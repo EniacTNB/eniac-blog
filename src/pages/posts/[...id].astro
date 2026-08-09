@@ -41,6 +41,9 @@ const { Content, headings } = await render(post);
     post.data.description ??
     `${post.data.title} - ENIAC.LOG`
   }
+  type="article"
+  publishedTime={post.data.date}
+  tags={post.data.tags}
 >
   <SiteHeader />
 
