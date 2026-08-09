@@ -13,6 +13,9 @@ on:
       - obsidian-update
 
 
+  workflow_dispatch:
+
+
 
 permissions:
 
@@ -23,8 +26,8 @@ permissions:
 
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: github-pages
+  cancel-in-progress: true
 
 
 
@@ -48,8 +51,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: EniacTNB/Obsidian-Knowloedge
+          ref: main
           path: obsidian
           token: ${{ secrets.OBSIDIAN_TOKEN }}
+          persist-credentials: false
 
 
       - name: Setup Node
@@ -63,18 +68,22 @@ jobs:
         run: npm ci
 
 
-      - name: Sync blog
+      - name: Sync Obsidian articles
         run: npm run sync-blog
         env:
-          OBSIDIAN_PATH: ./obsidian/2-Area/博客写作/Posts
+          OBSIDIAN_PATH: ${{ github.workspace }}/obsidian/2-Area/博客写作/Posts
 
 
       - name: Build Astro
         run: npm run build
 
 
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./dist
 
