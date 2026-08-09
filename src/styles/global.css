@@ -1,24 +1,57 @@
 :root {
-  --bg-color: #FAF8F2;
-  --text-color: #172033;
-  --primary-color: #243B64;
-  --accent-color: #D97757;
-  --border-color: #E5E1D8;
+  --paper: #fbf8ef;
+  --paper-deep: #f3eddf;
+  --ink: #102b4e;
+  --ink-soft: #38506d;
+  --coral: #ef593b;
+  --cornflower: #587fc9;
+  --white: #fffdf8;
+
+  --line: rgba(16, 43, 78, 0.18);
+  --line-strong: rgba(16, 43, 78, 0.72);
+
+  --font-body: "Noto Sans SC Variable", sans-serif;
+  --font-display: "Roboto Condensed Variable", sans-serif;
+  --font-mono: "Roboto Mono Variable", monospace;
+
+  --page-width: 1380px;
+  --content-width: 760px;
+  --radius: 2px;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+  background: var(--paper);
+}
+
 body {
+  min-width: 320px;
   margin: 0;
-  background: var(--bg-color);
-  color: var(--text-color);
-  font-family:
-    Inter,
-    "PingFang SC",
-    "Microsoft YaHei",
-    sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(
+      circle at 15% 5%,
+      rgba(88, 127, 201, 0.055),
+      transparent 28rem
+    ),
+    var(--paper);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  color: var(--white);
+  background: var(--coral);
 }
 
 a {
@@ -26,6 +59,38 @@ a {
   text-decoration: none;
 }
 
+button,
+input,
+textarea {
+  font: inherit;
+}
+
 img {
+  display: block;
   max-width: 100%;
+}
+
+.page-shell {
+  width: min(calc(100% - 48px), var(--page-width));
+  margin-inline: auto;
+}
+
+.prose-width {
+  width: min(100%, var(--content-width));
+  margin-inline: auto;
+}
+
+.eyebrow {
+  color: var(--coral);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 720px) {
+  .page-shell {
+    width: min(calc(100% - 28px), var(--page-width));
+  }
 }

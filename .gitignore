@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Generated from the private Obsidian repository
+src/content/posts/*
+!src/content/posts/.gitkeep

@@ -1,0 +1,38 @@
+---
+import "@fontsource-variable/noto-sans-sc";
+import "@fontsource-variable/roboto-condensed";
+import "@fontsource-variable/roboto-mono";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "ENIAC.LOG",
+  description = "关于软件、系统与持续学习的技术博客",
+} = Astro.props;
+
+const pageTitle =
+  title === "ENIAC.LOG" ? title : `${title} · ENIAC.LOG`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#fbf8ef" />
+
+    <title>{pageTitle}</title>
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>

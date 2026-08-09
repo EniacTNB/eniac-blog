@@ -13,6 +13,9 @@
     "sync-blog": "node scripts/sync-blog.js"
   },
   "dependencies": {
+    "@fontsource-variable/noto-sans-sc": "^5.3.0",
+    "@fontsource-variable/roboto-condensed": "^5.3.0",
+    "@fontsource-variable/roboto-mono": "^5.3.0",
     "@fontsource/inter": "^5.3.0",
     "astro": "^7.1.6",
     "glob": "^13.0.6",
