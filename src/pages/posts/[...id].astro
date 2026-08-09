@@ -1,0 +1,52 @@
+---
+import {
+  getCollection,
+  render,
+  type CollectionEntry,
+} from "astro:content";
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostLayout from "../../layouts/PostLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection(
+    "posts",
+    ({ data }) => data.publish
+  );
+
+  return posts.map((post) => ({
+    params: {
+      id: post.id
+        .replace(/\/index\.md$/, "")
+        .replace(/\/index$/, ""),
+    },
+    props: {
+      post,
+    },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={
+    post.data.description ??
+    `${post.data.title} - ENIAC.LOG`
+  }
+>
+  <SiteHeader />
+
+  <main class="page-shell">
+    <PostLayout post={post} headings={headings}>
+      <Content />
+    </PostLayout>
+  </main>
+</BaseLayout>

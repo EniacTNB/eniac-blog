@@ -1,0 +1,408 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+  headings: {
+    depth: number;
+    slug: string;
+    text: string;
+  }[];
+}
+
+const { post, headings } = Astro.props;
+
+const toc = headings.filter(
+  (heading) => heading.depth === 2 || heading.depth === 3
+);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(date)
+    .replaceAll("/", "-");
+
+const readingMinutes = (body = "") => {
+  const chineseCount =
+    body.match(/[㐀-鿿]/g)?.length ?? 0;
+
+  const englishCount =
+    body
+      .replace(/[㐀-鿿]/g, " ")
+      .match(/[a-zA-Z0-9]+/g)?.length ?? 0;
+
+  return Math.max(
+    1,
+    Math.ceil((chineseCount + englishCount) / 300)
+  );
+};
+
+const base = import.meta.env.BASE_URL;
+---
+
+<article class="post-page">
+  <header class="post-header">
+    <a class="back-link" href={base}>返回首页</a>
+
+    <p class="post-kicker">
+      {post.data.tags.length > 0
+        ? post.data.tags.join(" / ")
+        : "技术思考"}
+    </p>
+
+    <h1>{post.data.title}</h1>
+
+    {
+      post.data.description && (
+        <p class="post-description">
+          {post.data.description}
+        </p>
+      )
+    }
+
+    <div class="post-meta">
+      <time datetime={post.data.date.toISOString()}>
+        {formatDate(post.data.date)}
+      </time>
+
+      <span>{readingMinutes(post.body ?? "")} 分钟阅读</span>
+
+      <span>ENIAC.LOG</span>
+    </div>
+  </header>
+
+  <div class="post-body">
+    {
+      toc.length > 0 && (
+        <aside class="toc">
+          <p>CONTENTS</p>
+
+          <nav aria-label="文章目录">
+            {toc.map((heading) => (
+              <a
+                class:list={[
+                  heading.depth === 3 && "toc-subitem",
+                ]}
+                href={`#${heading.slug}`}
+              >
+                {heading.text}
+              </a>
+            ))}
+          </nav>
+        </aside>
+      )
+    }
+
+    <div class="article-prose">
+      <slot />
+    </div>
+  </div>
+
+  <footer class="post-footer">
+    <p>感谢阅读。</p>
+    <a href={base}>返回 ENIAC.LOG</a>
+  </footer>
+</article>
+
+<style>
+  .post-page {
+    padding-bottom: 80px;
+  }
+
+  .post-header {
+    max-width: 980px;
+    padding: 82px 0 58px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 46px;
+    color: var(--coral);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+  }
+
+  .post-kicker {
+    margin: 0 0 16px;
+    color: var(--coral);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .post-header h1 {
+    max-width: 920px;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 7vw, 6.8rem);
+    font-weight: 760;
+    line-height: 1.02;
+    letter-spacing: -0.055em;
+    overflow-wrap: anywhere;
+  }
+
+  .post-description {
+    max-width: 760px;
+    margin: 28px 0 0;
+    color: var(--ink-soft);
+    font-size: 1.15rem;
+    line-height: 1.85;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 30px;
+    margin-top: 30px;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+
+  .post-body {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 760px);
+    justify-content: center;
+    gap: 70px;
+    padding-top: 62px;
+  }
+
+  .toc {
+    align-self: start;
+    position: sticky;
+    top: 30px;
+    padding-top: 7px;
+  }
+
+  .toc > p {
+    margin: 0 0 16px;
+    color: var(--coral);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .toc nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 15px;
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .toc a {
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    transition:
+      color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .toc a:hover,
+  .toc a:focus-visible {
+    color: var(--coral);
+    transform: translateX(3px);
+  }
+
+  .toc-subitem {
+    padding-left: 12px;
+    font-size: 0.72rem !important;
+  }
+
+  .article-prose {
+    min-width: 0;
+    font-size: 1.05rem;
+    line-height: 1.95;
+  }
+
+  .article-prose :global(h2),
+  .article-prose :global(h3),
+  .article-prose :global(h4) {
+    scroll-margin-top: 30px;
+    font-family: var(--font-display);
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+  }
+
+  .article-prose :global(h2) {
+    margin: 3.2em 0 0.9em;
+    padding-bottom: 10px;
+    font-size: 2.2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .article-prose :global(h3) {
+    margin: 2.4em 0 0.75em;
+    font-size: 1.55rem;
+  }
+
+  .article-prose :global(h4) {
+    margin: 2em 0 0.7em;
+    font-size: 1.2rem;
+  }
+
+  .article-prose :global(p) {
+    margin: 0 0 1.55em;
+  }
+
+  .article-prose :global(a) {
+    color: var(--coral);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  .article-prose :global(strong) {
+    font-weight: 750;
+  }
+
+  .article-prose :global(blockquote) {
+    margin: 2.2em 0;
+    padding: 18px 24px;
+    color: var(--ink-soft);
+    background: var(--paper-deep);
+    border-left: 4px solid var(--coral);
+  }
+
+  .article-prose :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .article-prose :global(ul),
+  .article-prose :global(ol) {
+    margin: 0 0 1.7em;
+    padding-left: 1.5em;
+  }
+
+  .article-prose :global(li) {
+    margin-bottom: 0.5em;
+  }
+
+  .article-prose :global(hr) {
+    margin: 3.5em 0;
+    border: 0;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .article-prose :global(img) {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    margin: 2.5em auto;
+    border: 1px solid var(--line);
+  }
+
+  .article-prose :global(code) {
+    padding: 0.18em 0.42em;
+    color: var(--coral);
+    background: var(--paper-deep);
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+  }
+
+  .article-prose :global(pre) {
+    margin: 2.2em 0;
+    padding: 22px 24px;
+    overflow-x: auto;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+  }
+
+  .article-prose :global(pre code) {
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    font-size: 0.82rem;
+    line-height: 1.75;
+  }
+
+  .article-prose :global(table) {
+    display: block;
+    width: 100%;
+    margin: 2em 0;
+    overflow-x: auto;
+    border-collapse: collapse;
+  }
+
+  .article-prose :global(th),
+  .article-prose :global(td) {
+    padding: 11px 14px;
+    text-align: left;
+    border: 1px solid var(--line);
+  }
+
+  .article-prose :global(th) {
+    background: var(--paper-deep);
+    font-weight: 700;
+  }
+
+  .post-footer {
+    max-width: 760px;
+    margin: 70px auto 0;
+    padding-top: 24px;
+    border-top: 2px solid var(--ink);
+  }
+
+  .post-footer p {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .post-footer a {
+    color: var(--coral);
+    font-size: 0.86rem;
+    font-weight: 650;
+  }
+
+  @media (max-width: 920px) {
+    .post-body {
+      grid-template-columns: minmax(0, 760px);
+    }
+
+    .toc {
+      display: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .post-header {
+      padding: 50px 0 38px;
+    }
+
+    .back-link {
+      margin-bottom: 32px;
+    }
+
+    .post-header h1 {
+      font-size: clamp(2.7rem, 13vw, 4.6rem);
+    }
+
+    .post-description {
+      font-size: 1rem;
+    }
+
+    .post-body {
+      padding-top: 38px;
+    }
+
+    .article-prose {
+      font-size: 1rem;
+    }
+
+    .article-prose :global(h2) {
+      font-size: 1.8rem;
+    }
+  }
+</style>

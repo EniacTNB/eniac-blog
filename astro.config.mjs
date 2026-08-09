@@ -5,4 +5,11 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://eniactnb.github.io',
   base: '/eniac-blog',
+
+  markdown: {
+    shikiConfig: {
+      theme: "github-light",
+      wrap: true,
+    },
+  },
 });
