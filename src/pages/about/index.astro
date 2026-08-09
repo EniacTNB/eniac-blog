@@ -1,0 +1,138 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+
+const base = import.meta.env.BASE_URL;
+
+const rssHref = `${base}/rss.xml`.replace(/\/+/g, "/");
+---
+
+<BaseLayout
+  title="关于"
+  description="关于 Eniac,以及这个技术博客为什么存在"
+>
+  <SiteHeader />
+
+  <main class="page-shell section-page">
+    <header class="page-intro">
+      <p class="eyebrow">ABOUT ENIAC</p>
+      <h1>技术之外,仍然是思考。</h1>
+
+      <p>
+        我是 Eniac,一名关注人工智能、复杂系统与产品工程的技术实践者。
+        这里记录正在形成的判断,也保留推理过程中的问题与不确定性。
+      </p>
+    </header>
+
+    <section class="editorial-section">
+      <p class="section-label">01 · 关于我</p>
+
+      <div class="section-content">
+        <h2>在系统、模型与真实问题之间工作。</h2>
+
+        <p>
+          我的兴趣不只在于某个模型或工具本身,而在于它如何进入真实系统,
+          如何与人、数据、流程及既有软件协作。
+        </p>
+
+        <p>
+          我持续关注智能体协作、知识组织、复杂系统分析和产品工程,
+          也关注技术判断如何被验证、解释和长期沉淀。
+        </p>
+      </div>
+    </section>
+
+    <section class="editorial-section">
+      <p class="section-label">02 · 写什么</p>
+
+      <div class="field-grid">
+        <article class="field-card">
+          <h3>人工智能</h3>
+          <p>
+            智能体、模型应用、推理机制,以及人工智能进入真实业务后的工程问题。
+          </p>
+        </article>
+
+        <article class="field-card">
+          <h3>复杂系统</h3>
+          <p>
+            系统之间如何连接、协作、验证,以及复杂性如何被理解和管理。
+          </p>
+        </article>
+
+        <article class="field-card">
+          <h3>产品工程</h3>
+          <p>
+            从需求理解、架构设计到产品实现,记录技术方案背后的选择。
+          </p>
+        </article>
+
+        <article class="field-card">
+          <h3>知识管理</h3>
+          <p>
+            使用 Obsidian、GitHub 和自动化工作流构建可持续的个人知识系统。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="editorial-section">
+      <p class="section-label">03 · 原则</p>
+
+      <div class="section-content principles">
+        <p>保持具体,而不是堆叠概念。</p>
+        <p>保留证据,而不是只给出结论。</p>
+        <p>承认不确定性,并持续修正。</p>
+        <p>让知识可以连接、复用和演化。</p>
+      </div>
+    </section>
+
+    <section class="editorial-section">
+      <p class="section-label">04 · 联系</p>
+
+      <div class="section-content">
+        <h2>继续交流。</h2>
+
+        <p>
+          可以通过 GitHub 查看公开项目,或通过 RSS 订阅博客更新。
+        </p>
+
+        <div class="contact-links">
+          <a
+            class="field-link"
+            href="https://github.com/EniacTNB"
+            target="_blank"
+            rel="noreferrer"
+          >
+            访问 GitHub
+          </a>
+
+          <a
+            class="field-link"
+            href={rssHref}
+          >
+            订阅 RSS
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .principles p {
+    margin: 0;
+    padding: 15px 0;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 650;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+  }
+</style>

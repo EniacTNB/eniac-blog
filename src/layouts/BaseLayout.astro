@@ -3,6 +3,8 @@ import "@fontsource-variable/noto-sans-sc";
 import "@fontsource-variable/roboto-condensed";
 import "@fontsource-variable/roboto-mono";
 import "../styles/global.css";
+import "../styles/section-page.css";
+import SiteFooter from "../components/SiteFooter.astro";
 
 interface Props {
   title?: string;
@@ -211,5 +213,6 @@ const structuredData =
 
   <body>
     <slot />
+    <SiteFooter />
   </body>
 </html>

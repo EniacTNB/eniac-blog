@@ -1,0 +1,133 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import { projects } from "../../data/projects";
+
+const base = import.meta.env.BASE_URL;
+
+const resolveHref = (
+  href: string,
+  external = false
+) => {
+  if (external) return href;
+
+  return `${base}/${href.replace(/^\/+/, "")}`
+    .replace(/\/+/g, "/");
+};
+---
+
+<BaseLayout
+  title="项目"
+  description="Eniac 的公开技术项目与工程实践"
+>
+  <SiteHeader />
+
+  <main class="page-shell section-page">
+    <header class="page-intro">
+      <p class="eyebrow">SELECTED PROJECTS</p>
+      <h1>项目</h1>
+
+      <p>
+        记录那些从想法走向系统、从个人需求走向可持续工作流的实践。
+      </p>
+    </header>
+
+    <section class="project-list">
+      {
+        projects.map((project, index) => (
+          <article class="project">
+            <span class="project-number">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+
+            <div class="project-content">
+              <div class="field-meta">
+                <span>{project.status}</span>
+                <span>{project.period}</span>
+              </div>
+
+              <h2>{project.title}</h2>
+              <p>{project.summary}</p>
+
+              <div class="field-tags">
+                {project.tags.map((tag) => (
+                  <span>{tag}</span>
+                ))}
+              </div>
+
+              <a
+                class="field-link"
+                href={resolveHref(
+                  project.href,
+                  project.external
+                )}
+                target={
+                  project.external
+                    ? "_blank"
+                    : undefined
+                }
+                rel={
+                  project.external
+                    ? "noreferrer"
+                    : undefined
+                }
+              >
+                {project.action}
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .project-list {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .project {
+    display: grid;
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 48px;
+    padding: 48px 0;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .project-number {
+    color: var(--coral);
+    font-family: var(--font-display);
+    font-size: 3.2rem;
+    line-height: 1;
+  }
+
+  .project-content {
+    max-width: 860px;
+  }
+
+  .project h2 {
+    margin: 0 0 16px;
+    font-family: var(--font-display);
+    font-size: clamp(2.1rem, 4vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.045em;
+  }
+
+  .project-content > p {
+    color: var(--ink-soft);
+    line-height: 1.85;
+  }
+
+  @media (max-width: 720px) {
+    .project {
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 14px;
+      padding: 34px 0;
+    }
+
+    .project-number {
+      font-size: 2rem;
+    }
+  }
+</style>

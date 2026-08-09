@@ -1,0 +1,152 @@
+---
+const base = import.meta.env.BASE_URL;
+const year = new Date().getFullYear();
+
+const path = (value = "") =>
+  `${base}/${value}`.replace(/\/+/g, "/");
+
+const navigation = [
+  { label: "文章", href: path("posts/") },
+  { label: "笔记", href: path("notes/") },
+  { label: "项目", href: path("projects/") },
+  { label: "关于", href: path("about/") },
+  { label: "搜索", href: path("search/") },
+];
+---
+
+<footer class="site-footer">
+  <div class="footer-inner page-shell">
+    <div class="footer-brand">
+      <a href={path()}>ENIAC.LOG</a>
+
+      <p>
+        关于人工智能、复杂系统与产品工程的技术现场笔记。
+      </p>
+    </div>
+
+    <div class="footer-links">
+      <div>
+        <p class="footer-heading">NAVIGATION</p>
+
+        <nav aria-label="页脚导航">
+          {
+            navigation.map((item) => (
+              <a href={item.href}>{item.label}</a>
+            ))
+          }
+        </nav>
+      </div>
+
+      <div>
+        <p class="footer-heading">FOLLOW</p>
+
+        <nav aria-label="外部链接">
+          <a
+            href="https://github.com/EniacTNB"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub
+          </a>
+
+          <a href={path("rss.xml")}>RSS</a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© {year} Eniac</span>
+      <span>OBSIDIAN → GITHUB → ASTRO</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 60px;
+    padding: 28px 0 24px;
+    color: var(--paper);
+    background: var(--ink);
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) 1fr;
+    gap: 60px;
+  }
+
+  .footer-brand > a {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    font-weight: 760;
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+  }
+
+  .footer-brand p {
+    max-width: 470px;
+    margin: 22px 0 0;
+    color: rgba(251, 248, 239, 0.7);
+    line-height: 1.75;
+  }
+
+  .footer-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    padding-top: 14px;
+  }
+
+  .footer-heading {
+    margin: 0 0 15px;
+    color: var(--coral);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .footer-links nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-links a {
+    color: rgba(251, 248, 239, 0.78);
+    font-size: 0.86rem;
+  }
+
+  .footer-links a:hover,
+  .footer-links a:focus-visible {
+    color: var(--coral);
+  }
+
+  .footer-bottom {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding-top: 20px;
+    color: rgba(251, 248, 239, 0.48);
+    border-top: 1px solid rgba(251, 248, 239, 0.25);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.07em;
+  }
+
+  @media (max-width: 720px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+      gap: 34px;
+    }
+
+    .footer-links {
+      padding-top: 0;
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+    }
+  }
+</style>

@@ -11,6 +11,8 @@ const navItems = [
   { label: "关于", href: path("about/") },
   { label: "搜索", href: path("search/") },
 ];
+
+const pathname = Astro.url.pathname;
 ---
 
 <header class="site-header">
@@ -22,9 +24,19 @@ const navItems = [
 
     <nav aria-label="主导航">
       {
-        navItems.map((item) => (
-          <a href={item.href}>{item.label}</a>
-        ))
+        navItems.map((item) => {
+          const active = pathname.startsWith(item.href);
+
+          return (
+            <a
+              href={item.href}
+              class:list={{ active }}
+              aria-current={active ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          );
+        })
       }
     </nav>
 
@@ -99,6 +111,11 @@ const navItems = [
 
   nav a:hover::after,
   nav a:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  nav a.active::after {
     transform: scaleX(1);
     transform-origin: left;
   }
