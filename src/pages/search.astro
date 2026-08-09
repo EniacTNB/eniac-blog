@@ -1,0 +1,497 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+
+const base = import.meta.env.BASE_URL;
+
+const pagefindBundle =
+  `${base}/pagefind/`.replace(/\/+/g, "/");
+---
+
+<BaseLayout
+  title="搜索"
+  description="搜索 ENIAC.LOG 中的技术文章"
+  noindex={true}
+>
+  <SiteHeader />
+
+  <main
+    class="page-shell search-page"
+    data-search-page
+    data-base={base}
+    data-pagefind-bundle={pagefindBundle}
+  >
+    <header class="search-header">
+      <p class="eyebrow">SEARCH FIELD NOTES</p>
+      <h1>搜索</h1>
+      <p>
+        搜索文章标题、正文、代码与知识概念。
+      </p>
+    </header>
+
+    <form
+      class="search-form"
+      role="search"
+      id="search-form"
+    >
+      <label for="search-input">
+        输入搜索关键词
+      </label>
+
+      <div class="search-control">
+        <input
+          id="search-input"
+          name="q"
+          type="search"
+          placeholder="例如:多智能体、动态本体、Astro…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+
+        <button type="submit">搜索</button>
+      </div>
+    </form>
+
+    <section
+      class="search-output"
+      aria-labelledby="search-status"
+    >
+      <p
+        class="search-status"
+        id="search-status"
+        aria-live="polite"
+      >
+        输入关键词,开始检索技术笔记。
+      </p>
+
+      <ol
+        class="search-results"
+        id="search-results"
+      ></ol>
+    </section>
+  </main>
+
+  <script is:inline type="module">
+    const searchPage = document.querySelector(
+      "[data-search-page]"
+    );
+
+    const form = document.querySelector(
+      "#search-form"
+    );
+
+    const input = document.querySelector(
+      "#search-input"
+    );
+
+    const status = document.querySelector(
+      "#search-status"
+    );
+
+    const results = document.querySelector(
+      "#search-results"
+    );
+
+    const base = searchPage.dataset.base;
+    const bundle =
+      searchPage.dataset.pagefindBundle;
+
+    let pagefindInstance = null;
+
+    function setStatus(message) {
+      status.textContent = message;
+    }
+
+    function clearResults() {
+      results.replaceChildren();
+    }
+
+    async function loadPagefind() {
+      if (pagefindInstance) {
+        return pagefindInstance;
+      }
+
+      try {
+        pagefindInstance = await import(
+          `${bundle}pagefind.js`
+        );
+
+        await pagefindInstance.options({
+          baseUrl: base,
+          basePath: bundle,
+          excerptLength: 32,
+        });
+
+        await pagefindInstance.init();
+
+        return pagefindInstance;
+      } catch (error) {
+        console.error(error);
+
+        setStatus(
+          "搜索索引尚未生成,请使用构建预览模式检查。"
+        );
+
+        return null;
+      }
+    }
+
+    function createResultItem(result, index) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      const number = document.createElement("span");
+      const content = document.createElement("span");
+      const title = document.createElement("strong");
+      const excerpt = document.createElement("span");
+
+      item.className = "search-result";
+      link.href = result.url;
+
+      number.className = "result-number";
+      number.textContent = String(index + 1)
+        .padStart(2, "0");
+
+      content.className = "result-content";
+
+      title.className = "result-title";
+      title.textContent =
+        result.meta?.title ?? "未命名文章";
+
+      excerpt.className = "result-excerpt";
+
+      excerpt.innerHTML =
+        result.excerpt ?? "";
+
+      content.append(title, excerpt);
+      link.append(number, content);
+      item.append(link);
+
+      return item;
+    }
+
+    async function performSearch(rawQuery) {
+      const query = rawQuery.trim();
+
+      if (!query) {
+        clearResults();
+
+        setStatus(
+          "输入关键词,开始检索技术笔记。"
+        );
+
+        return;
+      }
+
+      searchPage.setAttribute(
+        "aria-busy",
+        "true"
+      );
+
+      setStatus("正在搜索…");
+
+      const pagefind = await loadPagefind();
+
+      if (!pagefind) {
+        searchPage.removeAttribute("aria-busy");
+        return;
+      }
+
+      try {
+        const search =
+          await pagefind.debouncedSearch(
+            query,
+            {},
+            220
+          );
+
+        if (search === null) {
+          return;
+        }
+
+        const loadedResults =
+          await Promise.all(
+            search.results
+              .slice(0, 20)
+              .map((result) => result.data())
+          );
+
+        clearResults();
+
+        if (loadedResults.length === 0) {
+          setStatus(
+            `没有找到与"${query}"相关的文章。`
+          );
+
+          return;
+        }
+
+        setStatus(
+          `找到 ${search.results.length} 篇相关文章`
+        );
+
+        const fragment =
+          document.createDocumentFragment();
+
+        loadedResults.forEach(
+          (result, index) => {
+            fragment.append(
+              createResultItem(result, index)
+            );
+          }
+        );
+
+        results.append(fragment);
+      } catch (error) {
+        console.error(error);
+
+        clearResults();
+        setStatus("搜索失败,请稍后再试。");
+      } finally {
+        searchPage.removeAttribute("aria-busy");
+      }
+    }
+
+    function updateURL(query) {
+      const url = new URL(window.location.href);
+
+      if (query.trim()) {
+        url.searchParams.set(
+          "q",
+          query.trim()
+        );
+      } else {
+        url.searchParams.delete("q");
+      }
+
+      window.history.replaceState(
+        {},
+        "",
+        url
+      );
+    }
+
+    form.addEventListener(
+      "submit",
+      (event) => {
+        event.preventDefault();
+
+        updateURL(input.value);
+        performSearch(input.value);
+      }
+    );
+
+    input.addEventListener("focus", () => {
+      loadPagefind();
+    });
+
+    input.addEventListener("input", () => {
+      updateURL(input.value);
+      performSearch(input.value);
+    });
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        const activeTag =
+          document.activeElement?.tagName;
+
+        const isEditing =
+          activeTag === "INPUT" ||
+          activeTag === "TEXTAREA";
+
+        if (
+          event.key === "/" &&
+          !isEditing &&
+          !event.metaKey &&
+          !event.ctrlKey &&
+          !event.altKey
+        ) {
+          event.preventDefault();
+          input.focus();
+        }
+      }
+    );
+
+    const initialQuery =
+      new URL(window.location.href)
+        .searchParams
+        .get("q") ?? "";
+
+    if (initialQuery) {
+      input.value = initialQuery;
+      performSearch(initialQuery);
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  .search-page {
+    padding-bottom: 90px;
+  }
+
+  .search-header {
+    padding: 78px 0 48px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .search-header h1 {
+    margin: 8px 0 14px;
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 10vw, 8.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.065em;
+  }
+
+  .search-header > p:last-child {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  .search-form {
+    padding: 42px 0 32px;
+  }
+
+  .search-form label {
+    display: block;
+    margin-bottom: 12px;
+    color: var(--coral);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .search-control {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .search-control input {
+    width: 100%;
+    min-width: 0;
+    padding: 13px 0 17px;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    outline: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 3.8rem);
+    font-weight: 650;
+    letter-spacing: -0.035em;
+  }
+
+  .search-control input::placeholder {
+    color: rgba(16, 43, 78, 0.32);
+  }
+
+  .search-control:focus-within {
+    border-bottom-color: var(--coral);
+  }
+
+  .search-control button {
+    margin-bottom: 15px;
+    padding: 9px 18px;
+    color: var(--white);
+    background: var(--coral);
+    border: 1px solid var(--coral);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .search-control button:hover,
+  .search-control button:focus-visible {
+    color: var(--coral);
+    background: transparent;
+  }
+
+  .search-status {
+    margin: 0;
+    padding: 15px 0;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+
+  .search-results {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  :global(.search-result) {
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  :global(.search-result a) {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 28px;
+    padding: 28px 0;
+  }
+
+  :global(.result-number) {
+    color: var(--coral);
+    font-family: var(--font-display);
+    font-size: 2.35rem;
+    line-height: 1;
+  }
+
+  :global(.result-content) {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  :global(.result-title) {
+    font-family: var(--font-display);
+    font-size: 1.65rem;
+    line-height: 1.3;
+  }
+
+  :global(.result-excerpt) {
+    max-width: 800px;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    line-height: 1.75;
+  }
+
+  :global(.result-excerpt mark) {
+    color: var(--coral);
+    background: transparent;
+    font-weight: 750;
+  }
+
+  :global(.search-result a:hover .result-title),
+  :global(.search-result a:focus-visible .result-title) {
+    color: var(--coral);
+  }
+
+  @media (max-width: 720px) {
+    .search-header {
+      padding: 54px 0 38px;
+    }
+
+    .search-control {
+      grid-template-columns: 1fr;
+    }
+
+    .search-control button {
+      justify-self: start;
+      margin: 0 0 15px;
+    }
+
+    :global(.search-result a) {
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    :global(.result-title) {
+      font-size: 1.3rem;
+    }
+  }
+</style>

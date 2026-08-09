@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
     "sync-blog": "node scripts/sync-blog.js"
@@ -25,5 +25,8 @@
     "gray-matter": "^4.0.3",
     "lucide-astro": "^0.556.0",
     "marked": "^18.0.9"
+  },
+  "devDependencies": {
+    "pagefind": "^1.5.2"
   }
 }
