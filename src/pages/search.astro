@@ -16,6 +16,8 @@ const pagefindBundle =
   <SiteHeader />
 
   <main
+    id="main-content"
+    tabindex="-1"
     class="page-shell search-page"
     data-search-page
     data-base={base}
@@ -354,7 +356,7 @@ const pagefindBundle =
   .search-form label {
     display: block;
     margin-bottom: 12px;
-    color: var(--coral);
+    color: var(--coral-text);
     font-family: var(--font-mono);
     font-size: 0.68rem;
     font-weight: 700;
@@ -393,9 +395,9 @@ const pagefindBundle =
   .search-control button {
     margin-bottom: 15px;
     padding: 9px 18px;
-    color: var(--white);
-    background: var(--coral);
-    border: 1px solid var(--coral);
+    color: var(--paper);
+    background: var(--ink);
+    border: 1px solid var(--ink);
     border-radius: var(--radius);
     cursor: pointer;
     font-weight: 700;
@@ -403,8 +405,9 @@ const pagefindBundle =
 
   .search-control button:hover,
   .search-control button:focus-visible {
-    color: var(--coral);
+    color: var(--coral-text);
     background: transparent;
+    border-color: var(--coral);
   }
 
   .search-status {
@@ -461,14 +464,14 @@ const pagefindBundle =
   }
 
   :global(.result-excerpt mark) {
-    color: var(--coral);
+    color: var(--coral-text);
     background: transparent;
     font-weight: 750;
   }
 
   :global(.search-result a:hover .result-title),
   :global(.search-result a:focus-visible .result-title) {
-    color: var(--coral);
+    color: var(--coral-text);
   }
 
   @media (max-width: 720px) {

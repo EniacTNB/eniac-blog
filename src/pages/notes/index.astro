@@ -43,7 +43,7 @@ const searchURL = (topic: string) =>
 >
   <SiteHeader />
 
-  <main class="page-shell section-page">
+  <main id="main-content" tabindex="-1" class="page-shell section-page">
     <header class="page-intro">
       <p class="eyebrow">KNOWLEDGE INDEX</p>
       <h1>笔记</h1>
@@ -107,7 +107,7 @@ const searchURL = (topic: string) =>
   }
 
   .topic-number {
-    color: var(--coral);
+    color: var(--coral-text);
     font-family: var(--font-mono);
     font-size: 0.65rem;
   }

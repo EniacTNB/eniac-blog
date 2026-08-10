@@ -1,0 +1,183 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+
+const base = import.meta.env.BASE_URL;
+
+const withBase = (value = "") =>
+  `${base}/${value}`.replace(/\/+/g, "/");
+---
+
+<BaseLayout
+  title="页面不存在"
+  description="你访问的页面不存在或已经移动"
+  noindex={true}
+>
+  <SiteHeader />
+
+  <main id="main-content" tabindex="-1" class="page-shell error-page">
+    <section class="not-found">
+      <div class="error-code" aria-hidden="true">
+        404
+      </div>
+
+      <div class="error-copy">
+        <p class="eyebrow">
+          COORDINATE NOT FOUND
+        </p>
+
+        <h1>
+          这页笔记,<br />
+          不在当前坐标里。
+        </h1>
+
+        <p class="description">
+          链接可能已经移动、失效,或者从未存在。
+          你可以返回首页,继续浏览技术文章与知识笔记。
+        </p>
+
+        <nav
+          class="error-actions"
+          aria-label="页面不存在时的操作"
+        >
+          <a
+            class="primary-action"
+            href={withBase()}
+          >
+            返回首页
+            <span aria-hidden="true">→</span>
+          </a>
+
+          <a
+            class="secondary-action"
+            href={withBase("posts/")}
+          >
+            浏览文章
+          </a>
+        </nav>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .error-page {
+    display: grid;
+    min-height: calc(100vh - 176px);
+    align-items: center;
+  }
+
+  .not-found {
+    display: grid;
+    grid-template-columns:
+      minmax(280px, 0.82fr)
+      minmax(360px, 1fr);
+    align-items: end;
+    gap: clamp(48px, 8vw, 120px);
+    padding: clamp(84px, 11vw, 160px) 0;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .error-code {
+    font-family: var(--font-display);
+    font-size: clamp(10rem, 22vw, 20rem);
+    font-weight: 760;
+    line-height: 0.7;
+    letter-spacing: -0.08em;
+  }
+
+  .error-copy {
+    padding: 10px 0 12px clamp(28px, 5vw, 68px);
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .error-copy .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink-soft);
+  }
+
+  .error-copy .eyebrow::before {
+    width: 34px;
+    height: 3px;
+    background: var(--coral);
+    content: "";
+  }
+
+  h1 {
+    margin: 18px 0 24px;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 5.8rem);
+    font-weight: 760;
+    line-height: 1.02;
+    letter-spacing: -0.055em;
+  }
+
+  .description {
+    max-width: 600px;
+    margin: 0;
+    color: var(--ink-soft);
+    line-height: 1.9;
+  }
+
+  .error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px 30px;
+    margin-top: 34px;
+  }
+
+  .primary-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 18px;
+    color: var(--paper);
+    background: var(--ink);
+    font-weight: 700;
+  }
+
+  .primary-action span {
+    color: var(--coral);
+    transition: transform 180ms ease;
+  }
+
+  .primary-action:hover span,
+  .primary-action:focus-visible span {
+    transform: translateX(5px);
+  }
+
+  .secondary-action {
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--ink);
+    font-weight: 650;
+  }
+
+  @media (max-width: 720px) {
+    .error-page {
+      min-height: auto;
+    }
+
+    .not-found {
+      grid-template-columns: 1fr;
+      gap: 42px;
+      padding: 70px 0;
+    }
+
+    .error-code {
+      font-size: clamp(8rem, 44vw, 12rem);
+    }
+
+    .error-copy {
+      padding: 30px 0 0;
+      border-top: 1px solid var(--line-strong);
+      border-left: 0;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 14vw, 4.6rem);
+    }
+  }
+</style>

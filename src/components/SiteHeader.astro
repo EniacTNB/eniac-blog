@@ -15,6 +15,10 @@ const navItems = [
 const pathname = Astro.url.pathname;
 ---
 
+<a class="skip-link" href="#main-content">
+  跳到正文
+</a>
+
 <header class="site-header">
   <div class="header-inner page-shell">
     <a class="brand" href={path()} aria-label="返回首页">
@@ -48,6 +52,24 @@ const pathname = Astro.url.pathname;
 </header>
 
 <style>
+  .skip-link {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+    padding: 10px 16px;
+    color: var(--paper);
+    background: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 700;
+    transform: translateY(-160%);
+    transition: transform 160ms ease;
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
   .site-header {
     padding-top: 22px;
   }
@@ -135,7 +157,7 @@ const pathname = Astro.url.pathname;
   }
 
   .issue strong {
-    color: var(--coral);
+    color: var(--coral-text);
     font-size: 0.88rem;
   }
 

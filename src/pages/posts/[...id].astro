@@ -47,7 +47,7 @@ const { Content, headings } = await render(post);
 >
   <SiteHeader />
 
-  <main class="page-shell">
+  <main id="main-content" tabindex="-1" class="page-shell">
     <PostLayout post={post} headings={headings}>
       <Content />
     </PostLayout>

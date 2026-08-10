@@ -4,6 +4,8 @@
   --ink: #102b4e;
   --ink-soft: #38506d;
   --coral: #ef593b;
+  --coral-text: #c34832;
+  --coral-on-dark: #f66f55;
   --cornflower: #587fc9;
   --white: #fffdf8;
 
@@ -33,7 +35,10 @@ html {
 
 body {
   min-width: 320px;
+  min-height: 100vh;
   margin: 0;
+  display: flex;
+  flex-direction: column;
   color: var(--ink);
   background: var(--paper);
   font-family: var(--font-body);
@@ -75,7 +80,7 @@ img {
 }
 
 .eyebrow {
-  color: var(--coral);
+  color: var(--coral-text);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 650;
@@ -87,4 +92,32 @@ img {
   .page-shell {
     width: min(calc(100% - 28px), var(--page-width));
   }
+}
+
+:focus-visible {
+  outline: 3px solid var(--coral-text);
+  outline-offset: 4px;
+}
+
+main:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+main {
+  flex: 1 0 auto;
 }
