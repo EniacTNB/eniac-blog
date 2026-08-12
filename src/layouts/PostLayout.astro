@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
 
 interface Props {
   post: CollectionEntry<"posts">;
@@ -73,6 +74,27 @@ const base = import.meta.env.BASE_URL;
       <span>ENIAC.LOG</span>
     </div>
   </header>
+
+  {
+    post.data.cover && (
+      <figure class="post-cover">
+        <Image
+          class="post-cover-image"
+          src={post.data.cover}
+          alt={
+            post.data.coverAlt ??
+            `${post.data.title}的文章封面`
+          }
+          widths={[720, 960, 1280, 1600]}
+          sizes="(max-width: 1380px) calc(100vw - 48px), 1380px"
+          format="webp"
+          quality={82}
+          loading="eager"
+          style={`object-position: ${post.data.coverFocus};`}
+        />
+      </figure>
+    )
+  }
 
   <div class="post-body">
     {
@@ -165,6 +187,22 @@ const base = import.meta.env.BASE_URL;
     color: var(--ink-soft);
     font-family: var(--font-mono);
     font-size: 0.7rem;
+  }
+
+  .post-cover {
+    width: 100%;
+    height: clamp(360px, 48vw, 680px);
+    margin: 0;
+    overflow: hidden;
+    background: var(--paper);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .post-cover :global(.post-cover-image) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .post-body {
@@ -436,6 +474,10 @@ const base = import.meta.env.BASE_URL;
 
     .post-description {
       font-size: 1rem;
+    }
+
+    .post-cover {
+      height: 280px;
     }
 
     .post-body {
