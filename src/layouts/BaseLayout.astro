@@ -209,6 +209,31 @@ const structuredData =
       type="application/ld+json"
       set:html={JSON.stringify(structuredData)}
     />
+
+    <meta
+      name="google-site-verification"
+      content="D9hx49hUXztNuWWk_NHr5VKJ5tdT3m3pN4gnTx1pNQY"
+    />
+
+    {
+      import.meta.env.PROD && (
+        <>
+          <script
+            is:inline
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-EWWXBTE6R2"
+          />
+          <script is:inline>
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-EWWXBTE6R2', { anonymize_ip: true });
+            `}
+          </script>
+        </>
+      )
+    }
   </head>
 
   <body>
